@@ -10,6 +10,7 @@ import {
   TableRow,
   Box,
   TextField,
+  FormControl,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { http } from "../libs/axios";
@@ -21,16 +22,25 @@ const User = () => {
   const [fields, setFields] = useState({});
   const [users, setUsers] = useState([]);
   const [fieldsUpdate, setFieldsUpdate] = useState({});
+  const [filter, setFilter] = useState("");
 
-  const modalOpen = (user, type) => {
-    type === "edit" && setFieldsUpdate(user)
-    setSelectedUser(user);
-    setModalType(type);
-    setOpen(true);
-  };
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const response = await http.get("/usuarios", { params: filter });
+        setUsers(response.data.data);
+      } catch (err) {
+        console.log(err.response.data);
+      }
+    };
+    getUsers();
+  }, [filter]);
 
-  const modalClose = () => {
-    setOpen(false);
+  console.log(filter);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setFilter({ name: e.target.search.value });
   };
 
   const handleCreate = async (event) => {
@@ -38,8 +48,9 @@ const User = () => {
     try {
       const response = await http.post("/usuarios", fields);
       console.log(response.status);
+      window.location.reload();
     } catch (err) {
-      console.log(err.response.data);
+      console.log(err.response?.data);
     }
   };
 
@@ -51,8 +62,19 @@ const User = () => {
         fieldsUpdate
       );
       console.log(response.status);
+      window.location.reload();
     } catch (err) {
       console.log(err?.response?.data);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await http.delete(`/usuarios/${selectedUser.uuid}`);
+      console.log(response.status);
+      window.location.reload();
+    } catch (err) {
+      console.log(err.response?.data);
     }
   };
 
@@ -66,30 +88,30 @@ const User = () => {
     setFieldsUpdate({ ...fieldsUpdate, [name]: value });
   };
 
-  const handleDelete = async () => {
-    try {
-      const response = await http.delete(`/usuarios/${selectedUser.uuid}`);
-      console.log(response.status);
-    } catch (err) {
-      console.log(err.response.data);
-    }
+  const modalOpen = (user, type) => {
+    type === "edit" && setFieldsUpdate(user);
+    setSelectedUser(user);
+    setModalType(type);
+    setOpen(true);
   };
 
-  useEffect(() => {
-    const getUsers = async () => {
-      try {
-        const response = await http.get("/usuarios");
-        setUsers(response.data.data);
-      } catch (err) {
-        console.log(err.response.data);
-      }
-    };
-    getUsers();
-  }, []);
+  const modalClose = () => {
+    setOpen(false);
+  };
+
   console.log(users);
   return (
     <>
       <Container>
+        <div>
+          <FormControl onSubmit={(e) => handleSearch(e)}>
+            <TextField type="search" name="search" id="search" />
+            <Button type="submit" color="success">
+              Buscar
+            </Button>
+          </FormControl>
+        </div>
+        <Button onClick={() => modalOpen(null, "create")}>Criar usuário</Button>
         <TableContainer>
           <Table>
             <TableHead>
@@ -124,7 +146,6 @@ const User = () => {
             ))}
           </Table>
         </TableContainer>
-        <Button onClick={() => modalOpen(null, "create")}>Criar usuário</Button>
       </Container>
       <Modal open={open} onClose={modalClose}>
         <Box
@@ -140,7 +161,7 @@ const User = () => {
           }}
         >
           {modalType === "create" && (
-            <form onSubmit={(event) => handleCreate(event)}>
+            <FormControl onSubmit={(event) => handleCreate(event)}>
               <TextField
                 id="name"
                 label="Nome"
@@ -178,7 +199,7 @@ const User = () => {
                 required
               />
               <Button type="submit">Criar</Button>
-            </form>
+            </FormControl>
           )}
           {modalType === "edit" && (
             <div>
@@ -218,9 +239,7 @@ const User = () => {
                 required
               />
               <Button onClick={modalClose}>Cancelar</Button>
-              <Button onClick={handleUpdate}>
-                Atualizar
-              </Button>
+              <Button onClick={handleUpdate}>Atualizar</Button>
             </div>
           )}
           {modalType === "delete" && (
