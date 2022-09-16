@@ -7,39 +7,9 @@
 html,
 body {
   font-family: "Roboto", sans-serif;
-  padding: 50px 20px;
 }
 
 a {
   color: inherit;
   text-decoration: none;
-}
-.inputGroup{
-  display: flex;
-  justify-content: flex-end;
-}
-.boxInput{
-  display: flex;
-  justify-content: flex-end;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.modalAlign{
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 450px;
-  width: 280px;
-}
-.modalAlignDelete{
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 70px;
-  width: 250px;
-}
-.buttons{
-  display: flex;
-  justify-content: space-between;
 }
