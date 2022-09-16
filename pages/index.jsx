@@ -44,13 +44,18 @@ const User = () => {
     setFilter({ name: e.target.search.value });
   };
 
+  const resetFields = () => {
+    setFields("");
+  };
+
   const handleCreate = async (event) => {
     event.preventDefault();
     try {
       await http.post("/usuarios", fields);
       setOpen(false);
+      resetFields();
     } catch (err) {
-      setErrors(err.response.data.data);
+      setErrors(err?.response?.data?.data);
     }
   };
 
@@ -91,6 +96,8 @@ const User = () => {
   };
 
   const modalClose = () => {
+    setFields({});
+    setErrors({});
     setOpen(false);
   };
 
@@ -175,7 +182,7 @@ const User = () => {
               className="modalAlign"
               onSubmit={(event) => handleCreate(event)}
             >
-              <FormControl>
+              <div className="modalAlign">
                 <TextField
                   id="name"
                   label="Nome"
@@ -223,7 +230,7 @@ const User = () => {
                 <Button variant="contained" type="submit">
                   Criar
                 </Button>
-              </FormControl>
+              </div>
             </form>
           )}
           {modalType === "edit" && (
