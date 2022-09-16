@@ -10,6 +10,7 @@ import {
   TableRow,
   Box,
   TextField,
+  FormControl,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { http } from "../libs/axios";
@@ -22,6 +23,7 @@ const User = () => {
   const [users, setUsers] = useState([]);
   const [fieldsUpdate, setFieldsUpdate] = useState({});
   const [filter, setFilter] = useState("");
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const getUsers = async () => {
@@ -33,7 +35,7 @@ const User = () => {
       }
     };
     getUsers();
-  }, [filter]);
+  }, [filter, open]);
 
   console.log(filter);
 
@@ -45,33 +47,27 @@ const User = () => {
   const handleCreate = async (event) => {
     event.preventDefault();
     try {
-      const response = await http.post("/usuarios", fields);
-      console.log(response.status);
-      window.location.reload();
+      await http.post("/usuarios", fields);
+      setOpen(false);
     } catch (err) {
-      console.log(err.response?.data);
+      setErrors(err.response.data.data);
     }
   };
 
   const handleUpdate = async (event) => {
     event.preventDefault();
     try {
-      const response = await http.put(
-        `/usuarios/${selectedUser.uuid}`,
-        fieldsUpdate
-      );
-      console.log(response.status);
-      window.location.reload();
+      await http.put(`/usuarios/${selectedUser.uuid}`, fieldsUpdate);
+      setOpen(false);
     } catch (err) {
-      console.log(err?.response?.data);
+      setErrors(err.response.data.data);
     }
   };
 
   const handleDelete = async () => {
     try {
-      const response = await http.delete(`/usuarios/${selectedUser.uuid}`);
-      console.log(response.status);
-      window.location.reload();
+      await http.delete(`/usuarios/${selectedUser.uuid}`);
+      setOpen(false);
     } catch (err) {
       console.log(err.response?.data);
     }
@@ -102,15 +98,30 @@ const User = () => {
   return (
     <>
       <Container>
-        <div className="boxInput" onSubmit={(e) => handleSearch(e)}>
+        <div className="boxInput">
           <div className="inputGroup">
-            <TextField  variant="outlined" size="small"  type="search" name="search" id="search" />
-            <Button variant="outlined" size="large" type="submit">
-              Buscar
-            </Button>
+            <form onSubmit={(e) => handleSearch(e)}>
+              <TextField
+                variant="outlined"
+                size="small"
+                type="search"
+                name="search"
+                id="search"
+              />
+              <Button variant="outlined" size="large" type="submit">
+                Buscar
+              </Button>
+            </form>
           </div>
-          <Button variant="contained" size="large"  onClick={() => modalOpen(null, "create")}>Criar usuário</Button>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => modalOpen(null, "create")}
+          >
+            Criar usuário
+          </Button>
         </div>
+
         <TableContainer>
           <Table>
             <TableHead>
@@ -160,45 +171,60 @@ const User = () => {
           }}
         >
           {modalType === "create" && (
-            <div className="modalAlign" onSubmit={(event) => handleCreate(event)}>
-              <TextField
-                id="name"
-                label="Nome"
-                value={fields.name}
-                type="text"
-                name="name"
-                onChange={handleChange}
-                required
-              />
-              <TextField
-                id="email"
-                label="E-mail"
-                value={fields.email}
-                type="email"
-                name="email"
-                onChange={handleChange}
-                required
-              />
-              <TextField
-                id="password"
-                label="Senha"
-                type="password"
-                name="password"
-                value={fields.password}
-                onChange={handleChange}
-                required
-              />
-              <TextField
-                id="birth"
-                label="Data de Nascimento"
-                value={fields.birth}
-                type="date"
-                name="birth"
-                onChange={handleChange}
-                required
-              />
-              <Button variant="contained" type="submit">Criar</Button>
-            </div>
+            <form
+              className="modalAlign"
+              onSubmit={(event) => handleCreate(event)}
+            >
+              <FormControl>
+                <TextField
+                  id="name"
+                  label="Nome"
+                  value={fields.name}
+                  type="text"
+                  name="name"
+                  error={errors?.name}
+                  helperText={errors?.name?.toString()}
+                  onChange={handleChange}
+                  required
+                />
+                <TextField
+                  id="email"
+                  label="E-mail"
+                  value={fields.email}
+                  type="email"
+                  name="email"
+                  error={errors?.email}
+                  helperText={errors?.email?.toString()}
+                  onChange={handleChange}
+                  required
+                />
+                <TextField
+                  id="password"
+                  label="Senha"
+                  type="password"
+                  name="password"
+                  value={fields.password}
+                  error={errors?.password}
+                  helperText={errors?.password?.toString()}
+                  onChange={handleChange}
+                  required
+                />
+                <TextField
+                  id="birth"
+                  label="Data de Nascimento"
+                  value={fields.birth}
+                  type="date"
+                  name="birth"
+                  error={errors?.birth}
+                  helperText={errors?.birth?.toString()}
+                  onChange={handleChange}
+                  required
+                />
+                <Button variant="contained" type="submit">
+                  Criar
+                </Button>
+              </FormControl>
+            </form>
           )}
           {modalType === "edit" && (
             <div className="modalAlign">
@@ -208,6 +234,8 @@ const User = () => {
                 type="text"
                 name="name"
                 value={fieldsUpdate.name}
+                error={errors?.name}
+                helperText={errors?.name?.toString()}
                 onChange={handleChangeUpdate}
                 required
               />
@@ -217,6 +245,8 @@ const User = () => {
                 type="email"
                 name="email"
                 value={fieldsUpdate.email}
+                error={errors?.email}
+                helperText={errors?.email?.toString()}
                 onChange={handleChangeUpdate}
                 required
               />
@@ -226,6 +256,8 @@ const User = () => {
                 type="password"
                 name="password"
                 value={fieldsUpdate?.password}
+                error={errors?.password}
+                helperText={errors?.password?.toString()}
                 onChange={handleChangeUpdate}
               />
               <TextField
@@ -234,19 +266,34 @@ const User = () => {
                 type="date"
                 name="birth"
                 value={fieldsUpdate.birth}
+                error={errors?.birth}
+                helperText={errors?.birth?.toString()}
                 onChange={handleChangeUpdate}
                 required
               />
-              <Button variant="outlined" color="error" onClick={modalClose}>Cancelar</Button>
-              <Button variant="contained" onClick={handleUpdate}>Atualizar</Button>
+              <Button variant="outlined" color="error" onClick={modalClose}>
+                Cancelar
+              </Button>
+              <Button variant="contained" onClick={handleUpdate}>
+                Atualizar
+              </Button>
             </div>
           )}
           {modalType === "delete" && (
             <>
-              <div className="modalAlignDelete">Deseja realmente excluir usuário?</div>
+              <div className="modalAlignDelete">
+                Deseja realmente excluir usuário?
+              </div>
               <div className="buttons">
-                <Button variant="contained" size="large" onClick={modalClose}>Cancelar</Button>
-                <Button variant="contained" size="large" onClick={handleDelete} color="error">
+                <Button variant="contained" size="large" onClick={modalClose}>
+                  Cancelar
+                </Button>
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={handleDelete}
+                  color="error"
+                >
                   Excluir
                 </Button>
               </div>
