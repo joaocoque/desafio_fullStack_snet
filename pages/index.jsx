@@ -10,7 +10,6 @@ import {
   TableRow,
   Box,
   TextField,
-  FormControl,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { http } from "../libs/axios";
@@ -103,15 +102,15 @@ const User = () => {
   return (
     <>
       <Container>
-        <div>
-          <FormControl onSubmit={(e) => handleSearch(e)}>
-            <TextField type="search" name="search" id="search" />
-            <Button type="submit" color="success">
+        <div className="boxInput" onSubmit={(e) => handleSearch(e)}>
+          <div className="inputGroup">
+            <TextField  variant="outlined" size="small"  type="search" name="search" id="search" />
+            <Button variant="outlined" size="large" type="submit">
               Buscar
             </Button>
-          </FormControl>
+          </div>
+          <Button variant="contained" size="large"  onClick={() => modalOpen(null, "create")}>Criar usuário</Button>
         </div>
-        <Button onClick={() => modalOpen(null, "create")}>Criar usuário</Button>
         <TableContainer>
           <Table>
             <TableHead>
@@ -161,7 +160,7 @@ const User = () => {
           }}
         >
           {modalType === "create" && (
-            <FormControl onSubmit={(event) => handleCreate(event)}>
+            <div className="modalAlign" onSubmit={(event) => handleCreate(event)}>
               <TextField
                 id="name"
                 label="Nome"
@@ -198,11 +197,11 @@ const User = () => {
                 onChange={handleChange}
                 required
               />
-              <Button type="submit">Criar</Button>
-            </FormControl>
+              <Button variant="contained" type="submit">Criar</Button>
+            </div>
           )}
           {modalType === "edit" && (
-            <div>
+            <div className="modalAlign">
               <TextField
                 id="name"
                 label="Nome"
@@ -238,17 +237,19 @@ const User = () => {
                 onChange={handleChangeUpdate}
                 required
               />
-              <Button onClick={modalClose}>Cancelar</Button>
-              <Button onClick={handleUpdate}>Atualizar</Button>
+              <Button variant="outlined" color="error" onClick={modalClose}>Cancelar</Button>
+              <Button variant="contained" onClick={handleUpdate}>Atualizar</Button>
             </div>
           )}
           {modalType === "delete" && (
             <>
-              <div>Deseja realmente excluir usuário?</div>
-              <Button onClick={modalClose}>Cancelar</Button>
-              <Button onClick={handleDelete} color="error">
-                Excluir
-              </Button>
+              <div className="modalAlignDelete">Deseja realmente excluir usuário?</div>
+              <div className="buttons">
+                <Button variant="contained" size="large" onClick={modalClose}>Cancelar</Button>
+                <Button variant="contained" size="large" onClick={handleDelete} color="error">
+                  Excluir
+                </Button>
+              </div>
             </>
           )}
         </Box>
