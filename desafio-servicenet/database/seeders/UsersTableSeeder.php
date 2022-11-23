@@ -15,7 +15,7 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         User::create([
-            'name' => 'João Victor Pinheiro',
+            'name' => 'João Victor Coque',
             'email' => 'joaocoque@gmail.com',
             'password' => bcrypt('12345678'),
             'birth' => '1999-01-26',
@@ -24,37 +24,28 @@ class UsersTableSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'Osvaldo Ruan Manuel de Paula',
-            'email' => 'osvaldo.ruan.depaula@fpsgeodata.com.br',
-            'password' => bcrypt('ZGs8CICD6s'),
+            'name' => 'Victor João Coque ',
+            'email' => 'joaocoque1@gmail.com',
+            'password' => bcrypt('12345678'),
             'birth' => '1959-08-07',
             'registration' => $this->generateUniqueRegistration(),
             'email_verified_at' => now(),
         ]);
 
         User::create([
-            'name' => 'Nathan Márcio Edson Dias',
-            'email' => 'nathan-dias95@monetto.com.br',
-            'password' => bcrypt('dHkclQxzml'),
+            'name' => 'Coque João Victor',
+            'email' => 'joaocoque2@gmail.com',
+            'password' => bcrypt('12345678'),
             'birth' => '1990-05-17',
             'registration' => $this->generateUniqueRegistration(),
             'email_verified_at' => now(),
         ]);
 
         User::create([
-            'name' => 'Luiza Lara Gomes',
-            'email' => 'luiza.lara.gomes@bcconsult.com.br',
-            'password' => bcrypt('XJnm7pgOiW'),
+            'name' => 'Coque Victor João',
+            'email' => 'joaocoque3@gmail.com',
+            'password' => bcrypt('12345678'),
             'birth' => '1981-08-21',
-            'registration' => $this->generateUniqueRegistration(),
-            'email_verified_at' => now(),
-        ]);
-
-        User::create([
-            'name' => 'Jennifer Caroline Martins',
-            'email' => 'jennifer-martins94@embraer.com.br',
-            'password' => bcrypt('XJnm7pgOiW'),
-            'birth' => '1992-07-05',
             'registration' => $this->generateUniqueRegistration(),
             'email_verified_at' => now(),
         ]);
